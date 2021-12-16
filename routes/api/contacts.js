@@ -1,3 +1,4 @@
+/* eslint-disable indent*/
 const express = require('express');
 const {
   listContacts,
@@ -5,6 +6,7 @@ const {
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact,
 } = require('../../model');
 /* eslint-disable-next-line */
 const router = express.Router();
@@ -12,6 +14,7 @@ const router = express.Router();
 const {
   validateCreateContact,
   validateUpdateContact,
+  validateUpdateStatusContact,
 } = require('../../validation/contacts');
 
 router.get('/', listContacts);
@@ -23,5 +26,11 @@ router.post('/', validateCreateContact, addContact);
 router.delete('/:contactId', removeContact);
 
 router.put('/:contactId', validateUpdateContact, updateContact);
+
+router.patch(
+  '/:contactId/favorite',
+  validateUpdateStatusContact,
+  updateStatusContact
+);
 
 module.exports = router;

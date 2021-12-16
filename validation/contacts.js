@@ -4,13 +4,14 @@ const {HttpCode} = require('../helpers/constants');
 
 const schemaCreateContact = Joi.object({
   name: Joi.string().alphanum().min(3).max(30).required(),
-  phone: Joi.string().min(7).max(9).required(),
+  phone: Joi.string().min(7).max(15).required(),
   email: Joi.string()
     .email({
       minDomainSegments: 2,
       tlds: {allow: ['com', 'net']},
     })
     .required(),
+  favorite: Joi.boolean().optional(),
 });
 
 const schemaUpdateContact = Joi.object({
@@ -23,6 +24,10 @@ const schemaUpdateContact = Joi.object({
     })
     .optional(),
 }).min(1);
+
+const schemaUpdateStatusContact = Joi.object({
+  favorite: Joi.boolean().required(),
+});
 
 const validate = (schema, body, next) => {
   const {error} = schema.validate(body);
@@ -42,4 +47,7 @@ module.exports.validateCreateContact = (req, res, next) => {
 };
 module.exports.validateUpdateContact = (req, res, next) => {
   return validate(schemaUpdateContact, req.body, next);
+};
+module.exports.validateUpdateStatusContact = (req, res, next) => {
+  return validate(schemaUpdateStatusContact, req.body, next);
 };
