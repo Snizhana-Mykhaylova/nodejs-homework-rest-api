@@ -1,14 +1,16 @@
+/* eslint-disable indent*/
 const {HttpCode} = require('../helpers/constants');
 const {ContactService} = require('../services');
 const contactService = new ContactService();
 
 const listContacts = async (req, res, next) => {
   try {
-    const contacts = await contactService.getAll();
+    const userId = req.user.id;
+    const contacts = await contactService.getAll(userId, req.query);
     res.status(HttpCode.OK).json({
       status: 'seccess',
       code: HttpCode.OK,
-      data: {contacts},
+      data: {...contacts},
     });
   } catch (err) {
     next(err);
@@ -16,7 +18,8 @@ const listContacts = async (req, res, next) => {
 };
 const getContactById = async (req, res, next) => {
   try {
-    const contact = await contactService.getById(req.params.contactId);
+    const userId = req.user.id;
+    const contact = await contactService.getById(userId, req.params.contactId);
     if (contact) {
       res.status(HttpCode.OK).json({
         status: 'seccess',
@@ -35,7 +38,8 @@ const getContactById = async (req, res, next) => {
 };
 const addContact = async (req, res, next) => {
   try {
-    const contact = await contactService.create(req.body);
+    const userId = req.user.id;
+    const contact = await contactService.create(userId, req.body);
     return res.status(HttpCode.CREATED).json({
       status: 'seccess',
       code: HttpCode.CREATED,
@@ -47,7 +51,8 @@ const addContact = async (req, res, next) => {
 };
 const removeContact = async (req, res, next) => {
   try {
-    const contact = await contactService.remove(req.params);
+    const userId = req.user.id;
+    const contact = await contactService.remove(userId, req.params);
     if (contact) {
       return res.status(HttpCode.OK).json({
         status: 'seccess',
@@ -68,7 +73,8 @@ const removeContact = async (req, res, next) => {
 };
 const updateContact = async (req, res, next) => {
   try {
-    const contact = await contactService.update(req.params, req.body);
+    const userId = req.user.id;
+    const contact = await contactService.update(userId, req.params, req.body);
     if (contact) {
       return res.status(HttpCode.OK).json({
         status: 'seccess',
@@ -89,7 +95,12 @@ const updateContact = async (req, res, next) => {
 
 const updateStatusContact = async (req, res, next) => {
   try {
-    const contact = await contactService.updateStatus(req.params, req.body);
+    const userId = req.user.id;
+    const contact = await contactService.updateStatus(
+      userId,
+      req.params,
+      req.body
+    );
     if (contact) {
       return res.status(HttpCode.OK).json({
         status: 'seccess',

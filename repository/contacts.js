@@ -7,33 +7,60 @@ class ContactRepository {
     this.model = Contact;
   }
 
-  async getAll() {
-    const results = await this.model.find({});
-    return results;
+  async getAll(userId, {page = 1, limit = 5, sortBy, sortByDesc, filter}) {
+    const result = await this.model.paginate(
+      {owner: userId},
+      {
+        page,
+        limit,
+        sort: {
+          ...(sortBy ? {[`$sortBy`]: 1} : {}),
+          ...(sortByDesc ? {[`$sortByDesc`]: -1} : {}),
+        },
+        select: filter ? filter.split('|').join(' ') : '',
+        populate: {
+          path: 'owner',
+          select: 'email subscription',
+        },
+      }
+    );
+    return result;
   }
-  async getById(id) {
-    const result = await this.model.findOne({
-      _id: id,
-    });
+  async getById(userId, id) {
+    const result = await this.model
+      .findOne({
+        _id: id,
+        owner: userId,
+      })
+      .populate({
+        path: 'owner',
+        select: 'email subscription',
+      });
+
     return result;
   }
 
-  async create(body) {
-    const result = await this.model.create(body);
+  async create(userId, body) {
+    const result = await this.model.create({...body, owner: userId});
     return result;
   }
 
-  async remove(id) {
+  async remove(userId, id) {
     const result = await this.model.findByIdAndRemove({
       _id: id,
+      owner: userId,
     });
     return result;
   }
 
-  async update(id, body) {
-    const result = await this.model.findByIdAndUpdate({_id: id}, body, {
-      new: true,
-    });
+  async update(userId, id, body) {
+    const result = await this.model.findByIdAndUpdate(
+      {_id: id, owner: userId},
+      body,
+      {
+        new: true,
+      }
+    );
     return result;
   }
 }

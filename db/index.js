@@ -4,7 +4,6 @@ require('dotenv').config();
 const url = process.env.MONGO_URL;
 
 const db = mongoose.connect(url, {
-  dbName: 'db-contacts',
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
