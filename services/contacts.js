@@ -1,3 +1,4 @@
+/* eslint-disable indent*/
 const {ContactRepository} = require('../repository');
 
 class ContactService {
@@ -7,32 +8,46 @@ class ContactService {
     };
   }
 
-  async getAll() {
-    const data = await this.repositories.contacts.getAll();
+  async getAll(userId, query) {
+    const data = await this.repositories.contacts.getAll(userId, query);
+    const {docs: contacts, totalDocs: total, limit, page} = data;
+    return {
+      contacts,
+      total,
+      limit,
+      page,
+    };
+  }
+
+  async getById(userId, id) {
+    const data = await this.repositories.contacts.getById(userId, id);
     return data;
   }
 
-  async getById(id) {
-    const data = await this.repositories.contacts.getById(id);
+  async create(userId, body) {
+    const data = await this.repositories.contacts.create(userId, body);
     return data;
   }
 
-  async create(body) {
-    const data = await this.repositories.contacts.create(body);
+  async remove(userId, {contactId}) {
+    const data = await this.repositories.contacts.remove(userId, contactId);
     return data;
   }
 
-  async remove({contactId}) {
-    const data = await this.repositories.contacts.remove(contactId);
+  async update(userId, {contactId}, body) {
+    const data = await this.repositories.contacts.update(
+      userId,
+      contactId,
+      body
+    );
     return data;
   }
-
-  async update({contactId}, body) {
-    const data = await this.repositories.contacts.update(contactId, body);
-    return data;
-  }
-  async updateStatus({contactId}, body) {
-    const data = await this.repositories.contacts.update(contactId, body);
+  async updateStatus(userId, {contactId}, body) {
+    const data = await this.repositories.contacts.update(
+      userId,
+      contactId,
+      body
+    );
     return data;
   }
 }

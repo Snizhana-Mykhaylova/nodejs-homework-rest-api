@@ -7,7 +7,7 @@ const {
   addContact,
   updateContact,
   updateStatusContact,
-} = require('../../model');
+} = require('../../controllers/contacts');
 /* eslint-disable-next-line */
 const router = express.Router();
 
@@ -17,18 +17,21 @@ const {
   validateUpdateStatusContact,
 } = require('../../validation/contacts');
 
-router.get('/', listContacts);
+const guard = require('../../helpers/guard');
 
-router.get('/:contactId', getContactById);
+router.get('/', guard, listContacts);
 
-router.post('/', validateCreateContact, addContact);
+router.get('/:contactId', guard, getContactById);
 
-router.delete('/:contactId', removeContact);
+router.post('/', guard, validateCreateContact, addContact);
 
-router.put('/:contactId', validateUpdateContact, updateContact);
+router.delete('/:contactId', guard, removeContact);
+
+router.put('/:contactId', guard, validateUpdateContact, updateContact);
 
 router.patch(
   '/:contactId/favorite',
+  guard,
   validateUpdateStatusContact,
   updateStatusContact
 );

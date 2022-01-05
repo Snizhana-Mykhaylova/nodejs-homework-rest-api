@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 const {HttpCode} = require('./helpers/constants');
 const contactsRouter = require('./routes/api/contacts');
+const usersRouter = require('./routes/api/users');
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 app.use(logger(formatsLogger));
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/contacts', contactsRouter);
+app.use('/api/users', usersRouter);
 
 app.use((req, res, next) => {
   res.status(HttpCode.NOT_FOUND).json({
