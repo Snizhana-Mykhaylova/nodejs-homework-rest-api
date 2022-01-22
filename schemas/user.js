@@ -1,4 +1,5 @@
 /* eslint-disable indent*/
+const gravatar = require('gravatar');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const SALT_FACTOR = 10;
@@ -19,6 +20,16 @@ const userSchema = new Schema(
       type: String,
       enum: ['starter', 'pro', 'business'],
       default: 'starter',
+    },
+    avatar: {
+      type: String,
+      default: function () {
+        return gravatar.url(this.email, {s: '250'}, true);
+      },
+    },
+    idCloudAvatar: {
+      type: String,
+      default: null,
     },
     token: {
       type: String,
