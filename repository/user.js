@@ -34,6 +34,19 @@ class UserRepository {
       {token}
     );
   }
+  async updateAvatar(id, avatar, idCloudAvatar) {
+    await this.model.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {avatar, idCloudAvatar}
+    );
+  }
+
+  async getAvatar(id) {
+    const {avatar, idCloudAvatar} = await this.model.findOne({_id: id});
+    return {avatar, idCloudAvatar};
+  }
 }
 
 module.exports = UserRepository;

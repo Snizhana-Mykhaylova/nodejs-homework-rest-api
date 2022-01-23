@@ -19,8 +19,8 @@ class ContactService {
     };
   }
 
-  async getById(userId, id) {
-    const data = await this.repositories.contacts.getById(userId, id);
+  async getById(userId, {contactId}) {
+    const data = await this.repositories.contacts.getById(userId, contactId);
     return data;
   }
 

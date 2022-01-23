@@ -1,4 +1,3 @@
-/* eslint-disable indent*/
 const {HttpCode} = require('../helpers/constants');
 const {ContactService} = require('../services');
 const contactService = new ContactService();
@@ -7,8 +6,8 @@ const listContacts = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const contacts = await contactService.getAll(userId, req.query);
-    res.status(HttpCode.OK).json({
-      status: 'seccess',
+    return res.status(HttpCode.OK).json({
+      status: 'success',
       code: HttpCode.OK,
       data: {...contacts},
     });
@@ -19,10 +18,10 @@ const listContacts = async (req, res, next) => {
 const getContactById = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const contact = await contactService.getById(userId, req.params.contactId);
+    const contact = await contactService.getById(userId, req.params);
     if (contact) {
-      res.status(HttpCode.OK).json({
-        status: 'seccess',
+      return res.status(HttpCode.OK).json({
+        status: 'success',
         code: HttpCode.OK,
         data: {contact},
       });
@@ -41,7 +40,7 @@ const addContact = async (req, res, next) => {
     const userId = req.user.id;
     const contact = await contactService.create(userId, req.body);
     return res.status(HttpCode.CREATED).json({
-      status: 'seccess',
+      status: 'success',
       code: HttpCode.CREATED,
       data: {contact},
     });
@@ -55,7 +54,7 @@ const removeContact = async (req, res, next) => {
     const contact = await contactService.remove(userId, req.params);
     if (contact) {
       return res.status(HttpCode.OK).json({
-        status: 'seccess',
+        status: 'success',
         code: HttpCode.OK,
         message: 'contact deleted',
         data: {contact},
@@ -77,7 +76,7 @@ const updateContact = async (req, res, next) => {
     const contact = await contactService.update(userId, req.params, req.body);
     if (contact) {
       return res.status(HttpCode.OK).json({
-        status: 'seccess',
+        status: 'success',
         code: HttpCode.OK,
         data: {contact},
       });
@@ -103,7 +102,7 @@ const updateStatusContact = async (req, res, next) => {
     );
     if (contact) {
       return res.status(HttpCode.OK).json({
-        status: 'seccess',
+        status: 'success',
         code: HttpCode.OK,
         data: {contact},
       });

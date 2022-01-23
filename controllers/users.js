@@ -17,7 +17,7 @@ const signUp = async (req, res, next) => {
   try {
     const newUser = await serviseUser.create(req.body);
     return res.status(HttpCode.OK).json({
-      status: 'seccess',
+      status: 'success',
       code: HttpCode.OK,
       user: {
         email: newUser.email,
@@ -35,7 +35,7 @@ const logIn = async (req, res, next) => {
     const token = await serviseAuth.logIn({email, password});
     if (token) {
       return res.status(HttpCode.OK).json({
-        status: 'seccess',
+        status: 'success',
         code: HttpCode.OK,
         data: {
           token,
@@ -58,6 +58,16 @@ const logOut = async (req, res, next) => {
     .status(HttpCode.NO_CONTENT)
     .json({status: 'sucsess', code: HttpCode.NO_CONTENT});
 };
+
+const avatars = async (req, res, next) => {
+  const userId = req.user.id;
+  const pathFile = req.file.path;
+  const url = await serviseUser.updateAvatar(userId, pathFile);
+  return res
+    .status(HttpCode.OK)
+    .json({status: 'sucsess', code: HttpCode.OK, avatarURL: url});
+};
+
 const currentUser = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -79,4 +89,6 @@ const currentUser = async (req, res, next) => {
   }
 };
 
-module.exports = {signUp, logIn, logOut, currentUser};
+const verify = async (req, res, next) => {};
+
+module.exports = {signUp, logIn, logOut, avatars, currentUser, verify};
