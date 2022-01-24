@@ -21,6 +21,11 @@ class UserRepository {
     return result;
   }
 
+  async findByToken(token) {
+    const result = await this.model.findOne(token);
+    return result;
+  }
+
   async create(body) {
     const user = new this.model(body);
     return user.save();
@@ -34,6 +39,7 @@ class UserRepository {
       {token}
     );
   }
+
   async updateAvatar(id, avatar, idCloudAvatar) {
     await this.model.findOneAndUpdate(
       {
