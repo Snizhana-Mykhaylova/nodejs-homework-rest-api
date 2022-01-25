@@ -13,6 +13,7 @@ module.exports = {
     'space-before-function-paren': 'off',
     'linebreak-style': 'off',
     'arrow-parens': 'off',
+    indent: 'off',
     'require-jsdoc': 'off',
   },
 };

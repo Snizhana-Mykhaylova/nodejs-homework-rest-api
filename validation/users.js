@@ -1,6 +1,5 @@
-/* eslint-disable indent*/
 const Joi = require('joi');
-
+/* eslint-disable indent*/
 const schemaRegLogUser = Joi.object({
   email: Joi.string()
     .email({
@@ -12,6 +11,18 @@ const schemaRegLogUser = Joi.object({
     )
     .required(),
   password: Joi.string().required(),
+});
+
+const schemaReVerifyUser = Joi.object({
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: {allow: ['com', 'net', 'org', 'ua', 'ru', 'gov', 'ca']},
+    })
+    .pattern(
+      /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+    )
+    .required(),
 });
 
 const validate = (schema, res, req, next) => {
@@ -28,5 +39,9 @@ const validate = (schema, res, req, next) => {
 module.exports = {
   regLogValidation: (req, res, next) => {
     return validate(schemaRegLogUser, res, req, next);
+  },
+
+  reVerifyValidation: (req, res, next) => {
+    return validate(schemaReVerifyUser, res, req, next);
   },
 };

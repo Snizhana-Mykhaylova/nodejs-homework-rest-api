@@ -89,6 +89,42 @@ const currentUser = async (req, res, next) => {
   }
 };
 
-const verify = async (req, res, next) => {};
+const verify = async (req, res, next) => {
+  try {
+    const result = await serviseUser.verify(req.params);
 
-module.exports = {signUp, logIn, logOut, avatars, currentUser, verify};
+    if (result) {
+      return res.status(HttpCode.OK).json({
+        status: 'sucsess',
+        code: HttpCode.OK,
+        data: {message: 'Verification successful'},
+      });
+    }
+    next({
+      status: HttpCode.NOT_FOUND,
+      message: 'User not found',
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const reVerify = async (req, res) => {
+  const result = await serviseUser.reVerify(req.body.email);
+
+  if (result) {
+    return res.status(200).json({message: 'Verification email sent'});
+  }
+
+  res.status(400).json({message: 'Verification has already been passed'});
+};
+
+module.exports = {
+  signUp,
+  logIn,
+  logOut,
+  avatars,
+  currentUser,
+  verify,
+  reVerify,
+};

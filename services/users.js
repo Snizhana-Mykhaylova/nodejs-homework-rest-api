@@ -1,8 +1,11 @@
 const {UserRepository} = require('../repository');
+const EmailService = require('./email');
+const {ErrorHandler} = require('../helpers/errorHandler');
+const {nanoid} = require('nanoid');
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs/promises');
 require('dotenv').config();
-const {ErrorHandler} = require('../helpers/errorHandler');
+
 class UsersService {
   constructor() {
     this.cloudinary = cloudinary;
@@ -15,10 +18,20 @@ class UsersService {
     this.repositories = {
       users: new UserRepository(),
     };
+    this.emailService = new EmailService();
   }
 
   async create(body) {
-    const data = await this.repositories.users.create(body);
+    const verifyToken = nanoid();
+    const {email} = body;
+    const name = 'User';
+
+    try {
+      await this.emailService.sendEmail(verifyToken, email, name);
+    } catch (e) {
+      throw new ErrorHandler(503, e.message, 'service Unavailable');
+    }
+    const data = await this.repositories.users.create({...body, verifyToken});
     return data;
   }
 
@@ -47,6 +60,30 @@ class UsersService {
       return avatar;
     } catch (err) {
       throw new ErrorHandler(null, 'Error upload avatar');
+    }
+  }
+
+  async verify({verificationToken}) {
+    const user = await this.repositories.users.findByToken({
+      verifyToken: verificationToken,
+    });
+    if (!user) {
+      return false;
+    }
+    await user.updateOne({verify: true, verifyToken: null});
+    return true;
+  }
+
+  async reVerify(email) {
+    const user = await this.repositories.users.findByEmail(email);
+
+    if (user & !user.verify) {
+      try {
+        await this.emailService.sendEmail(user.verifyToken, email, name);
+        return true;
+      } catch (e) {
+        throw new ErrorHandler(503, e.message, 'service Unavailable');
+      }
     }
   }
 
